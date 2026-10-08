@@ -27,6 +27,6 @@ done
 mkdir -p "$ROOT/backend/logs"
 LOG="$ROOT/backend/logs/api.log"
 echo "-> starting uvicorn on 127.0.0.1:$PORT (log: $LOG)"
-nohup "$PY" -m uvicorn app.main:app --host 127.0.0.1 --port "$PORT" "${EXTRA[@]}" \
+nohup "$PY" -m uvicorn app.main:app --host 127.0.0.1 --port "$PORT" ${EXTRA[@]+"${EXTRA[@]}"} \
   > "$LOG" 2>&1 &
 echo "   pid $! — health: http://127.0.0.1:$PORT/api/health — docs: http://127.0.0.1:$PORT/docs"

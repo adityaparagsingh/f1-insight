@@ -6,6 +6,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT/frontend"
 
+# Ensure node tooling is found regardless of the caller's login PATH.
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+
 if [[ ! -d node_modules ]]; then
   echo "-> installing frontend dependencies (first run)"
   npm install
@@ -26,5 +29,5 @@ done
 mkdir -p "$ROOT/backend/logs"
 LOG="$ROOT/backend/logs/vite.log"
 echo "-> starting Vite dev server on http://${HOST}:${PORT} (log: $LOG)"
-nohup npm run dev -- --host "$HOST" --port "$PORT" "${EXTRA[@]}" > "$LOG" 2>&1 &
+nohup npm run dev -- --host "$HOST" --port "$PORT" ${EXTRA[@]+"${EXTRA[@]}"} > "$LOG" 2>&1 &
 echo "   pid $!"
