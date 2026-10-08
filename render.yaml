@@ -1,0 +1,28 @@
+# Render Blueprint for the F1 INSIGHT backend.
+#
+# Render does not offer managed MySQL, so the database is external:
+# set DATABASE_URL to a managed MySQL compatible connstring (e.g. TiDB
+# Cloud serverless, Railway MySQL, Aiven MySQL) that has been loaded with
+# the warehouse dump produced by scripts/dump_db.sh.
+#
+# Deploy: connect this repo on Render → "Blueprint" → it reads render.yaml.
+# The two `sync: false` variables are filled in from the dashboard,
+#   DATABASE_URL  = mysql+pymysql://user:pass@host:port/f1_insight
+#   CORS_ORIGINS  = https://<your-project>.vercel.app (comma-separated)
+services:
+  - type: web
+    name: f1-insight-api
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: JOLPICA_REQUESTS_PER_SECOND
+        value: "2"

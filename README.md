@@ -165,6 +165,7 @@ Detailed documentation is available in the `/docs` directory:
   association rules, classification (E/S/A/P)
 - [API Reference](docs/api.md) — full endpoint list and contracts
 - [Setup Guide](docs/setup.md) — install, MySQL, ETL, run, test, verify
+- [Deployment Guide](docs/deploy.md) — Vercel (frontend) + Render (API) + managed MySQL
 
 ## 🎯 Key Features Explained
 

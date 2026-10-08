@@ -102,7 +102,6 @@ def test_analytics_overview_standings_path(client, db):
     from sqlalchemy import text
 
     season = 2099
-    refs = ("fetch_test_driver", "fetch_test_ctor", "fetch_test_circuit")
     try:
         db.execute(text("SET FOREIGN_KEY_CHECKS=0"))
         db.execute(text(
