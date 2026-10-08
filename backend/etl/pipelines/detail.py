@@ -105,7 +105,7 @@ def load_laps(
             stats.note(f"laps skipped for {s}-{r:02d}: no race results loaded")
             continue
         try:
-            raw_rows = api.laps(s, r)
+            raw_rows = list(api.laps(s, r))
         except JolpicaError as exc:
             stats.issue(f"laps {s}-{r:02d}: {exc}")
             continue
