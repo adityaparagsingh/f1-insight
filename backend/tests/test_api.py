@@ -90,6 +90,102 @@ def test_analytics_overview(client):
     assert body["counts"]["total_records"] > 0
 
 
+def test_analytics_overview_standings_path(client, db):
+    """Regression: overview must work when standings rows exist.
+
+    An unqualified `constructor_id` in the constructor-progression query
+    raised "Column 'constructor_id' in field list is ambiguous" whenever the
+    season had standings data (the earlier suite ran while the standings
+    tables were empty, so the bug was masked). Seeds a synthetic season and
+    asserts both progression blocks come back.
+    """
+    from sqlalchemy import text
+
+    season = 2099
+    refs = ("fetch_test_driver", "fetch_test_ctor", "fetch_test_circuit")
+    try:
+        db.execute(text("SET FOREIGN_KEY_CHECKS=0"))
+        db.execute(text(
+            "INSERT INTO dim_date (date_id, full_date, year, quarter, month,"
+            " month_name, day, day_of_week, day_name, week_of_year, is_weekend)"
+            " VALUES (900001, '2026-01-01', 2026, 1, 1, 'January', 1, 4,"
+            " 'Thursday', 1, 0) ON DUPLICATE KEY UPDATE full_date = full_date"
+        ))
+        db.execute(text(
+            "INSERT INTO dim_circuit (circuit_ref, name) VALUES"
+            " ('fetch_test_circuit', 'Fetch Test Circuit')"
+            " ON DUPLICATE KEY UPDATE name = name"
+        ))
+        db.execute(text(
+            "INSERT INTO dim_constructor (constructor_ref, name) VALUES"
+            " ('fetch_test_ctor', 'Fetch Test Constructor')"
+            " ON DUPLICATE KEY UPDATE name = name"
+        ))
+        db.execute(text(
+            "INSERT INTO dim_driver (driver_ref, forename, surname, full_name) VALUES"
+            " ('fetch_test_driver', 'Fetch', 'Test', 'Fetch Test')"
+            " ON DUPLICATE KEY UPDATE full_name = full_name"
+        ))
+        db.execute(text(
+            "INSERT INTO dim_race (race_ref, season, round, name, date, date_id,"
+            " circuit_id) VALUES ('fetch-test-2099', :season, 1, 'Fetch Test GP',"
+            " '2026-01-01', 900001, (SELECT circuit_id FROM dim_circuit"
+            " WHERE circuit_ref = 'fetch_test_circuit'))"
+            " ON DUPLICATE KEY UPDATE name = name"
+        ), {"season": season})
+        db.execute(text(
+            "INSERT INTO fact_race_result (race_id, driver_id, constructor_id,"
+            " circuit_id, date_id, season, grid, position, position_text, points,"
+            " laps, status, pit_stop_count) VALUES ((SELECT race_id FROM dim_race"
+            " WHERE race_ref = 'fetch-test-2099'), (SELECT driver_id FROM dim_driver"
+            " WHERE driver_ref = 'fetch_test_driver'), (SELECT constructor_id"
+            " FROM dim_constructor WHERE constructor_ref = 'fetch_test_ctor'),"
+            " (SELECT circuit_id FROM dim_circuit WHERE circuit_ref ="
+            " 'fetch_test_circuit'), 900001, :season, 1, 1, '1', 25, 50,"
+            " 'Finished', 0) ON DUPLICATE KEY UPDATE points = points"
+        ), {"season": season})
+        db.execute(text(
+            "INSERT INTO fact_driver_standing (race_id, driver_id, constructor_id,"
+            " season, round, position, points, wins) VALUES ((SELECT race_id FROM"
+            " dim_race WHERE race_ref = 'fetch-test-2099'), (SELECT driver_id"
+            " FROM dim_driver WHERE driver_ref = 'fetch_test_driver'),"
+            " (SELECT constructor_id FROM dim_constructor WHERE"
+            " constructor_ref = 'fetch_test_ctor'), :season, 1, 1, 25, 0)"
+            " ON DUPLICATE KEY UPDATE points = points"
+        ), {"season": season})
+        db.execute(text(
+            "INSERT INTO fact_constructor_standing (race_id, constructor_id,"
+            " season, round, position, points, wins) VALUES ((SELECT race_id FROM"
+            " dim_race WHERE race_ref = 'fetch-test-2099'), (SELECT"
+            " constructor_id FROM dim_constructor WHERE constructor_ref ="
+            " 'fetch_test_ctor'), :season, 1, 1, 25, 0)"
+            " ON DUPLICATE KEY UPDATE points = points"
+        ), {"season": season})
+        db.commit()
+
+        r = client.get(f"/api/analytics/overview?season={season}")
+        assert r.status_code == 200
+        body = r.json()
+        assert body["progression"]["season"] == season
+        assert body["progression"]["drivers"], "driver progression missing"
+        assert body["progression"]["constructors"], "constructor progression missing"
+    finally:
+        db.execute(text("SET FOREIGN_KEY_CHECKS=0"))
+        for table, where in (
+            ("fact_constructor_standing", "season = :season"),
+            ("fact_driver_standing", "season = :season"),
+            ("fact_race_result", "season = :season"),
+            ("dim_race", "season = :season"),
+            ("dim_driver", "driver_ref = 'fetch_test_driver'"),
+            ("dim_constructor", "constructor_ref = 'fetch_test_ctor'"),
+            ("dim_circuit", "circuit_ref = 'fetch_test_circuit'"),
+            ("dim_date", "date_id = 900001"),
+        ):
+            db.execute(text(f"DELETE FROM {table} WHERE {where}"), {"season": season})
+        db.execute(text("SET FOREIGN_KEY_CHECKS=1"))
+        db.commit()
+
+
 def test_unknown_route_is_404(client):
     r = client.get("/api/does-not-exist")
     assert r.status_code == 404

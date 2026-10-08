@@ -178,10 +178,10 @@ def _progression(session: Session, season: Optional[int]) -> dict:
     ctors = fetch_all(
         session,
         """
-        SELECT constructor_id, name FROM fact_constructor_standing cs
+        SELECT cs.constructor_id, c.name FROM fact_constructor_standing cs
         JOIN dim_constructor c ON c.constructor_id = cs.constructor_id
-        WHERE season = :s AND round = (SELECT MAX(round) FROM fact_constructor_standing WHERE season = :s)
-        ORDER BY position ASC LIMIT 6
+        WHERE cs.season = :s AND cs.round = (SELECT MAX(cs2.round) FROM fact_constructor_standing cs2 WHERE cs2.season = :s)
+        ORDER BY cs.position ASC LIMIT 6
         """,
         s=season,
     )
