@@ -1,0 +1,29 @@
+# F1 INSIGHT — MySQL data warehouse service.
+# Usage:  docker compose up -d
+# Then run Alembic migrations / ETL from the host against localhost:3306.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: f1_insight_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: f1_insight
+      MYSQL_USER: f1user
+      MYSQL_PASSWORD: f1pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - f1_mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uf1user", "-pf1pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  f1_mysql_data:
