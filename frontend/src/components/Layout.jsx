@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import api from '../services/api'
+import ThemeToggle from './ThemeToggle'
 
 const NAV = [
   { to: '/', label: 'Dashboard', end: true },
@@ -78,7 +79,10 @@ export default function Layout() {
           ))}
         </nav>
         <span className="topbar-spacer" />
-        <ApiStatus />
+        <div className="topbar-actions">
+          <ThemeToggle />
+          <ApiStatus />
+        </div>
       </header>
 
       <main className="page">

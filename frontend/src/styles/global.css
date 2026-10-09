@@ -6,23 +6,36 @@
 :root {
   --bg: #0a0a0c;
   --bg-grid: #101013;
+  --bg-end: #0d0d10;
+  --bg-glow: rgba(225, 6, 0, 0.12);
   --panel: #141418;
   --panel-2: #1b1b21;
   --panel-3: #232329;
+  --panel-end: #121216;
   --line: #2a2a33;
   --line-strong: #3a3a45;
   --text: #f4f4f6;
   --text-dim: #b6b6c0;
   --muted: #85858f;
+  --ink: #ffffff;
   --red: #e10600;
   --red-2: #ff2a1f;
   --red-dark: #8c0300;
+  --red-soft: #ffb3ad;
   --white: #ffffff;
   --green: #00d17a;
+  --green-soft: #8ff0c4;
   --amber: #ffb400;
+  --amber-soft: #ffd98a;
   --blue: #2ea8ff;
+  --blue-soft: #a7dbff;
   --violet: #a06bff;
   --gold: #ffcf3f;
+  --gold-soft: #ffe7a3;
+  --silver: #d8d8e0;
+  --topbar-bg: rgba(10, 10, 12, 0.92);
+  --tooltip-bg: #101013;
+  --grid-hover: rgba(255, 255, 255, 0.04);
   --radius: 10px;
   --radius-sm: 6px;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
@@ -30,6 +43,45 @@
   --mono: 'SFMono-Regular', 'JetBrains Mono', 'Roboto Mono', Menlo, Consolas,
     monospace;
   --nav-h: 62px;
+}
+
+/* ==========================================================================
+   Light theme — "daylight" variant. Same design tokens, inverted canvas.
+   ========================================================================== */
+:root[data-theme='light'] {
+  --bg: #f5f5f8;
+  --bg-grid: #ececf2;
+  --bg-end: #e8e8ef;
+  --bg-glow: rgba(225, 6, 0, 0.06);
+  --panel: #ffffff;
+  --panel-2: #f1f1f6;
+  --panel-3: #e7e7ef;
+  --panel-end: #fbfbfd;
+  --line: #dcdce5;
+  --line-strong: #c5c5d1;
+  --text: #17171e;
+  --text-dim: #464650;
+  --muted: #6f6f7c;
+  --ink: #131318;
+  --red: #c80300;
+  --red-2: #e10600;
+  --red-dark: #9a0400;
+  --red-soft: #b13a33;
+  --white: #ffffff;
+  --green: #00a85f;
+  --green-soft: #0b7a4d;
+  --amber: #cf8f00;
+  --amber-soft: #8a6200;
+  --blue: #1f88e0;
+  --blue-soft: #1a6ba8;
+  --violet: #8b50e8;
+  --gold: #cda01c;
+  --gold-soft: #866a00;
+  --silver: #777789;
+  --topbar-bg: rgba(245, 245, 248, 0.92);
+  --tooltip-bg: #ffffff;
+  --grid-hover: rgba(20, 20, 30, 0.06);
+  --shadow: 0 10px 30px rgba(70, 70, 100, 0.12);
 }
 
 * {
@@ -45,8 +97,8 @@ body,
 body {
   margin: 0;
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(225, 6, 0, 0.12), transparent 55%),
-    linear-gradient(180deg, var(--bg) 0%, #0d0d10 100%);
+    radial-gradient(1200px 600px at 80% -10%, var(--bg-glow), transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-end) 100%);
   background-attachment: fixed;
   color: var(--text);
   font-family: var(--font);
@@ -94,7 +146,7 @@ code,
   align-items: center;
   gap: 1rem;
   padding: 0 1.25rem;
-  background: rgba(10, 10, 12, 0.92);
+  background: var(--topbar-bg);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
@@ -170,12 +222,12 @@ code,
 }
 
 .nav-link:hover {
-  color: var(--white);
+  color: var(--ink);
   background: var(--panel-2);
 }
 
 .nav-link.active {
-  color: var(--white);
+  color: var(--ink);
   background: var(--panel-3);
   box-shadow: inset 0 -2px 0 var(--red);
 }
@@ -285,7 +337,7 @@ code,
 
 /* ----------------------------------------------------------------- cards */
 .panel {
-  background: linear-gradient(180deg, var(--panel) 0%, #121216 100%);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-end) 100%);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1rem 1.1rem;
@@ -386,7 +438,7 @@ code,
   font-size: 1.7rem;
   font-weight: 700;
   line-height: 1.1;
-  color: var(--white);
+  color: var(--ink);
 }
 
 .stat .stat-foot {
@@ -454,7 +506,7 @@ table.data thead th.sortable {
 }
 
 table.data thead th.sortable:hover {
-  color: var(--white);
+  color: var(--ink);
 }
 
 table.data tbody td {
@@ -480,12 +532,12 @@ table.data th.num {
 }
 
 table.data td.strong {
-  color: var(--white);
+  color: var(--ink);
   font-weight: 600;
 }
 
 a.rowlink {
-  color: var(--white);
+  color: var(--ink);
   font-weight: 600;
   border-bottom: 1px solid transparent;
 }
@@ -510,27 +562,27 @@ a.rowlink:hover {
 }
 
 .badge.red {
-  color: #ffb3ad;
+  color: var(--red-soft);
   border-color: rgba(225, 6, 0, 0.5);
   background: rgba(225, 6, 0, 0.12);
 }
 .badge.green {
-  color: #8ff0c4;
+  color: var(--green-soft);
   border-color: rgba(0, 209, 122, 0.45);
   background: rgba(0, 209, 122, 0.12);
 }
 .badge.amber {
-  color: #ffd98a;
+  color: var(--amber-soft);
   border-color: rgba(255, 180, 0, 0.45);
   background: rgba(255, 180, 0, 0.12);
 }
 .badge.blue {
-  color: #a7dbff;
+  color: var(--blue-soft);
   border-color: rgba(46, 168, 255, 0.45);
   background: rgba(46, 168, 255, 0.12);
 }
 .badge.gold {
-  color: #ffe7a3;
+  color: var(--gold-soft);
   border-color: rgba(255, 207, 63, 0.5);
   background: rgba(255, 207, 63, 0.14);
 }
@@ -556,7 +608,7 @@ a.rowlink:hover {
   font-weight: 700;
 }
 .pos-silver {
-  color: #d8d8e0 !important;
+  color: var(--silver) !important;
   font-weight: 700;
 }
 .pos-bronze {
@@ -689,7 +741,7 @@ select.control {
 }
 
 .tab.active {
-  color: var(--white);
+  color: var(--ink);
   border-bottom-color: var(--red);
 }
 
@@ -714,7 +766,7 @@ select.control {
 
 .state.error {
   border-color: rgba(225, 6, 0, 0.5);
-  color: #ffb3ad;
+  color: var(--red-soft);
 }
 
 .spinner {
@@ -769,15 +821,27 @@ select.control {
 }
 
 .recharts-default-tooltip {
-  background: #101013 !important;
+  background: var(--tooltip-bg) !important;
   border: 1px solid var(--line-strong) !important;
   border-radius: 8px !important;
   font-size: 0.78rem !important;
+  color: var(--text) !important;
 }
 
 .recharts-cartesian-axis-tick text {
   fill: var(--muted);
   font-size: 0.72rem;
+}
+
+/* theme-aware chart chrome (grid lines, axes, donut seams) */
+.recharts-cartesian-grid line,
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: var(--line-strong);
+}
+
+.recharts-pie .recharts-sector {
+  stroke: var(--bg);
 }
 
 /* ----------------------------------------------------------- profile head */
@@ -871,7 +935,7 @@ select.control {
 
 .metric-pill .metric-value {
   font-size: 1.05rem;
-  color: var(--white);
+  color: var(--ink);
   font-weight: 700;
 }
 
@@ -923,6 +987,192 @@ select.control {
   height: 10px;
   border-radius: 2px;
   margin-right: 0.35rem;
+}
+
+/* ------------------------------------------------------- theme transitions */
+@media (prefers-reduced-motion: no-preference) {
+  *,
+  *::before,
+  *::after {
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+}
+
+/* ---------------------------------------------------------- theme toggle */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  padding: 0.3rem 0.65rem 0.3rem 0.34rem;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.12s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--red);
+  box-shadow: 0 0 12px rgba(225, 6, 0, 0.18);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+.tt-orb {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.tt-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  transition:
+    opacity 0.5s ease,
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tt-day {
+  background: radial-gradient(circle at 35% 30%, #ffe9a8 0%, #ffc94d 55%, #ff9a2e 100%);
+  box-shadow: 0 0 12px rgba(255, 195, 60, 0.55);
+}
+
+.tt-night {
+  background: radial-gradient(circle at 40% 35%, #33406e 0%, #171f3a 65%, #0c1122 100%);
+  box-shadow: 0 0 10px rgba(120, 140, 255, 0.35);
+}
+
+.theme-toggle.day .tt-night {
+  opacity: 0;
+  transform: rotate(-45deg) scale(0.35);
+}
+
+.theme-toggle.day .tt-day {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle:not(.day) .tt-day {
+  opacity: 0;
+  transform: rotate(45deg) scale(0.35);
+}
+
+.theme-toggle:not(.day) .tt-night {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.tt-sun {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff6cc, #ffd75e 55%, #ffb300);
+}
+
+.tt-rays {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 200, 90, 0) 0deg 28deg,
+    rgba(255, 200, 90, 0.95) 28deg 34deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 50%, #000 55%);
+  mask: radial-gradient(circle, transparent 50%, #000 55%);
+  animation: tt-spin 16s linear infinite;
+}
+
+.tt-moon {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: -5px 4px 0 2px #ffedc9;
+  transform: rotate(-28deg);
+}
+
+.tt-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.9);
+  animation: tt-twinkle 2.6s ease-in-out infinite;
+}
+
+.tt-star.s1 {
+  top: 1px;
+  left: 7px;
+}
+
+.tt-star.s2 {
+  top: 9px;
+  right: 0;
+  animation-delay: 0.7s;
+}
+
+.tt-star.s3 {
+  bottom: 0;
+  left: 3px;
+  animation-delay: 1.3s;
+}
+
+.tt-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@keyframes tt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tt-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* --------------------------------------------------------------- mobile */

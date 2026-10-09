@@ -37,8 +37,8 @@ export const PALETTE = [
 ]
 
 export const AXIS = {
-  stroke: '#3a3a45',
-  tick: { fill: '#85858f', fontSize: 11 },
+  stroke: 'var(--line-strong)',
+  tick: { fill: 'var(--muted)', fontSize: 11 },
 }
 
 export function ChartBox({ height = 300, children, empty }) {
@@ -54,13 +54,13 @@ export function ChartBox({ height = 300, children, empty }) {
 
 const tooltipStyle = {
   contentStyle: {
-    background: '#101013',
-    border: '1px solid #3a3a45',
+    background: 'var(--tooltip-bg)',
+    border: '1px solid var(--line-strong)',
     borderRadius: 8,
     fontSize: 12,
   },
-  labelStyle: { color: '#f4f4f6' },
-  itemStyle: { color: '#b6b6c0' },
+  labelStyle: { color: 'var(--text)' },
+  itemStyle: { color: 'var(--text-dim)' },
 }
 
 export function TelemetryLine({
@@ -74,7 +74,7 @@ export function TelemetryLine({
   return (
     <ChartBox height={height} empty={!data || data.length === 0 ? 'No series data' : null}>
       <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 4 }}>
-        <CartesianGrid stroke="#232329" strokeDasharray="3 3" />
+        <CartesianGrid stroke="var(--line-strong)" strokeDasharray="3 3" />
         <XAxis dataKey={x} {...AXIS} label={xLabel} />
         <YAxis {...AXIS} label={yLabel} width={48} />
         <Tooltip {...tooltipStyle} />
@@ -112,7 +112,7 @@ export function TelemetryBar({
         layout={layout}
         margin={{ top: 8, right: 16, left: layout === 'vertical' ? 30 : 0, bottom: 4 }}
       >
-        <CartesianGrid stroke="#232329" strokeDasharray="3 3" />
+        <CartesianGrid stroke="var(--line-strong)" strokeDasharray="3 3" />
         {layout === 'vertical' ? (
           <>
             <XAxis type="number" {...AXIS} />
@@ -124,7 +124,7 @@ export function TelemetryBar({
             <YAxis {...AXIS} width={48} />
           </>
         )}
-        <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+        <Tooltip {...tooltipStyle} cursor={{ fill: 'var(--grid-hover)' }} />
         {bars.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
         {bars.map((bar, i) => (
           <Bar
@@ -160,7 +160,7 @@ export function ScatterPlot({
   return (
     <ChartBox height={height} empty={!data || data.length === 0 ? 'No point data' : null}>
       <ScatterChart margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-        <CartesianGrid stroke="#232329" strokeDasharray="3 3" />
+        <CartesianGrid stroke="var(--line-strong)" strokeDasharray="3 3" />
         <XAxis type="number" dataKey={x} name={xLabel || x} {...AXIS} />
         <YAxis type="number" dataKey={y} name={yLabel || y} {...AXIS} width={48} />
         <ZAxis range={[36, 36]} />
@@ -175,7 +175,7 @@ export function MultiScatter({ series, x, y, height = 340, xLabel, yLabel }) {
   return (
     <ChartBox height={height} empty={!series || series.length === 0 ? 'No point data' : null}>
       <ScatterChart margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-        <CartesianGrid stroke="#232329" strokeDasharray="3 3" />
+        <CartesianGrid stroke="var(--line-strong)" strokeDasharray="3 3" />
         <XAxis type="number" dataKey={x} name={xLabel || x} {...AXIS} />
         <YAxis type="number" dataKey={y} name={yLabel || y} {...AXIS} width={48} />
         <ZAxis range={[30, 30]} />
@@ -208,7 +208,7 @@ export function Donut({ data, nameKey = 'name', valueKey = 'value', height = 300
           innerRadius="52%"
           outerRadius="78%"
           paddingAngle={2}
-          stroke="#0a0a0c"
+          stroke="var(--bg)"
         >
           {data.map((entry, idx) => (
             <Cell
@@ -234,7 +234,7 @@ export function TelemetryArea({ data, x, areas, height = 300 }) {
             </linearGradient>
           ))}
         </defs>
-        <CartesianGrid stroke="#232329" strokeDasharray="3 3" />
+        <CartesianGrid stroke="var(--line-strong)" strokeDasharray="3 3" />
         <XAxis dataKey={x} {...AXIS} />
         <YAxis {...AXIS} width={48} />
         <Tooltip {...tooltipStyle} />
