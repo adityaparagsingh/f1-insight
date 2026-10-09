@@ -1,28 +1,28 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "f1-insight-api": {
-      "root": "backend",
-      "framework": "fastapi",
-      "buildCommand": "pip install -r requirements.txt"
-    },
-    "frontend": {
-      "root": "frontend",
-      "framework": "vite"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": {
-        "service": "f1-insight-api"
-      }
-    },
-    {
-      "source": "/(.*)",
-      "destination": {
-        "service": "frontend"
-      }
-    }
-  ]
+"$schema": "https://openapi.vercel.sh/vercel.json",
+"services": {
+"f-one-insight-api": {
+"root": "backend",
+"framework": "fastapi",
+"buildCommand": "pip install -r requirements.txt"
+},
+"frontend": {
+"root": "frontend",
+"framework": "vite"
+}
+},
+"rewrites": [
+{
+"source": "/api/(.*)",
+"destination": {
+"service": "f-one-insight-api"
+}
+},
+{
+"source": "/(.*)",
+"destination": {
+"service": "frontend"
+}
+}
+]
 }
