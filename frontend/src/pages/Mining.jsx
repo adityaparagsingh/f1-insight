@@ -315,6 +315,87 @@ function PredictionResult({ data }) {
         <Stat label="Top-1 hit rate" value={pct(picks.hit_rate, 1)} tone="green" foot={`${int(picks.correct)} / ${int(picks.races)} races`} />
       </div>
 
+      <Panel
+        title="Prediction accuracy — what it is and how it's calculated"
+        hint={`graded on the held-out test seasons (> ${int(data.train_until)})`}
+        className="mt-2"
+      >
+        <div className="grid grid-4">
+          <Stat
+            label="Winner-pick hit rate"
+            value={pct(picks.hit_rate, 1)}
+            tone="green"
+            foot={`highest-P(win) driver won ${int(picks.correct)} of ${int(picks.races)} test races`}
+          />
+          <Stat
+            label="Binary accuracy (RF)"
+            value={pct(rf.accuracy, 1)}
+            tone="blue"
+            foot="correct win / no-win labels across all test entries"
+          />
+          <Stat
+            label="Naive baseline"
+            value={pct(1 - (data.base_rate || 0), 1)}
+            tone="amber"
+            foot='"never wins" would score this while catching 0 winners'
+          />
+          <Stat
+            label="Test set"
+            value={`${int(data.test_size)} entries`}
+            foot={`${int(data.test_winners)} real wins · base rate ${pct(data.base_rate, 1)}`}
+          />
+        </div>
+
+        <div className="stack mt-2">
+          <div className="insight-card">
+            <span className="insight-cat">Step 1 · Honest train / test split</span>
+            <p>
+              Models are trained only on seasons ≤ <b>{int(data.train_until)}</b> and graded on the
+              test seasons after the cut — <i>{data.split}</i>. Every number on this page comes from
+              races the models never saw while learning, so accuracy is measured on genuinely unseen
+              data instead of being inflated by memorising the past.
+            </p>
+          </div>
+          <div className="insight-card">
+            <span className="insight-cat">Step 2 · Per-entry accuracy (binary classification)</span>
+            <p>
+              For every driver-race row the model answers “will this driver win?” (yes / no).
+              Binary accuracy = the share of rows labelled correctly =
+              <b> (true wins + true no-wins) ÷ all test rows</b>. The Random Forest scores{' '}
+              <b>{pct(rf.accuracy, 1)}</b>; precision <b>{pct(rf.precision, 1)}</b>, recall{' '}
+              <b>{pct(rf.recall, 1)}</b> and F1 <b>{num(rf.f1, 3)}</b> in the table below show how
+              well it finds the rare winning row (precision = correct win calls ÷ all win calls;
+              recall = real wins caught ÷ all real wins).
+            </p>
+          </div>
+          <div className="insight-card">
+            <span className="insight-cat">Step 3 · The headline number: winner-pick hit rate</span>
+            <p>
+              For each test race, the driver with the highest P(win) is named the{' '}
+              <b>predicted winner</b>. Hit rate = times that driver actually won ÷ number of test
+              races = <b>{pct(picks.hit_rate, 1)}</b> ({int(picks.correct)} of {int(picks.races)}).
+              This is the number that mirrors real life — getting the pole-sitter right is easier
+              than predicting a wet-race surprise, so it is deliberately reported per individual
+              race in the table above rather than buried in an aggregate.
+            </p>
+          </div>
+          <div className="insight-card">
+            <span className="insight-cat">Step 4 · Why the baseline matters</span>
+            <p>
+              Winners are rare — base rate only <b>{pct(data.base_rate, 1)}</b> of test rows are a
+              win — so a naive “predict never wins” classifier already scores{' '}
+              <b>{pct(1 - (data.base_rate || 0), 1)}</b> accuracy while correctly predicting zero
+              winners. Accuracy alone flatters; that is why precision, recall, F1 and the confusion
+              matrix above are shown alongside it.
+            </p>
+          </div>
+          <div className="insight-card">
+            <span className="insight-cat">Step 5 · Anti-leakage</span>
+            <p>{data.leakage_policy}</p>
+          </div>
+        </div>
+      </Panel>
+
       <Panel title="Model evaluation" hint={data.split} className="mt-2">
         <div className="table-wrap">
           <table className="data">
